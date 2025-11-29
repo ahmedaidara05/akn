@@ -507,34 +507,59 @@
         }
 
         /* Résultats de recherche */
-        .search-results {
-            display: none;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: var(--shadow);
-            margin-top: 10px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
+     /* Résultats de recherche */
+.search-results {
+    display: none;
+    background-color: white;
+    color: var(--text-color);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    margin-top: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+    position: absolute;
+    width: 100%;
+    z-index: 101;
+}
 
-        .search-results.active {
-            display: block;
-        }
+.search-results.active {
+    display: block;
+}
 
-        .search-result-item {
-            padding: 10px 15px;
-            border-bottom: 1px solid #eee;
-            cursor: pointer;
-        }
+.search-result-item {
+    padding: 10px 15px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
 
-        .search-result-item:last-child {
-            border-bottom: none;
-        }
+.search-result-item:last-child {
+    border-bottom: none;
+}
 
-        .search-result-item:hover {
-            background-color: #f5f5f5;
-        }
+.search-result-item:hover {
+    background-color: #f5f5f5;
+}
 
+.search-result-item.highlighted {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Pour le mode sombre */
+body.dark-mode .search-results {
+    background-color: var(--card-color);
+    color: var(--text-color);
+}
+
+body.dark-mode .search-result-item:hover {
+    background-color: #3a3a3a;
+}
+
+body.dark-mode .search-result-item.highlighted {
+    background-color: var(--primary-color);
+    color: white;
+}
         /* Responsive */
         @media (max-width: 768px) {
             .books-grid {
@@ -661,7 +686,7 @@
     <div id="reading-page" class="page hide-nav">
         <div class="reading-header">
             <button id="back-to-detail">
-                <i class="fas fa-arrow-left"></i>
+               <i class="fas fa-arrow-left"></i>
             </button>
             <div class="reading-title" id="reading-chapter-title">Chapitre 1</div>
             <div class="reading-controls">
@@ -717,7 +742,32 @@
             <!-- Les chapitres seront ajoutés dynamiquement -->
         </ul>
     </div>
+<!-- Page résultats de recherche -->
+<!-- Page résultats de recherche -->
+<div id="search-results-page" class="page">
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <button id="back-from-search" style="background:none; border:none; color:white; font-size:1.2rem;">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <div class="search-bar" style="flex:1; margin:0 15px;">
+                    <input type="text" id="search-results-input" placeholder="Titre, auteur ou sujet">
+                </div>
+                <div style="width: 24px;"></div> <!-- Pour l'alignement -->
+            </div>
+        </div>
+    </header>
 
+    <div class="container">
+        <section>
+            <h2 class="section-title" id="search-results-title">Résultats de recherche</h2>
+            <div class="books-grid" id="search-results-grid">
+                <!-- Les résultats seront ajoutés ici -->
+            </div>
+        </section>
+    </div>
+</div>
     <!-- Page bibliothèque -->
     <div id="library-page" class="page">
         <header>
@@ -1012,7 +1062,30 @@ document.getElementById('back-to-home').addEventListener('click', function() {
                     showReadingPage(currentBook, 0);
                 }
             });
+// Bouton retour de la page résultats
+document.getElementById('back-to-home').addEventListener('click', function() {
+    showPage('home-page');
+});
 
+// Recherche depuis la page résultats
+document.getElementById('search-results-input').addEventListener('input', function() {
+    const query = this.value.toLowerCase().trim();
+    
+    if (query.length === 0) {
+        document.getElementById('search-results-grid').innerHTML = '<p>Entrez un terme de recherche</p>';
+        return;
+    }
+    
+    // Filtrer les livres
+    const results = books.filter(book => 
+        book.title.toLowerCase().includes(query) || 
+        book.author.toLowerCase().includes(query) ||
+        book.description.toLowerCase().includes(query)
+    );
+    
+    // Mettre à jour la page de résultats
+    showSearchResultsPage(results);
+});
             // Bouton retour au détail
             backToDetailBtn.addEventListener('click', function() {
                 showPage('book-detail-page');
@@ -1095,22 +1168,23 @@ document.getElementById('back-to-home').addEventListener('click', function() {
         }
 
         // Afficher une page spécifique
-        function showPage(pageId) {
-            pages.forEach(page => page.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-            
-            // Masquer ou afficher la barre de navigation
-            if (document.getElementById(pageId).classList.contains('hide-nav')) {
-                bottomNav.classList.add('hidden');
-            } else {
-                bottomNav.classList.remove('hidden');
-            }
-            
-            // Recharger les livres favoris si on va sur la page bibliothèque
-            if (pageId === 'library-page') {
-                loadFavoriteBooks();
-            }
-        }
+      function showPage(pageId) {
+    pages.forEach(page => page.classList.remove('active'));
+    document.getElementById(pageId).classList.add('active');
+    
+    // Masquer ou afficher la barre de navigation
+    if (document.getElementById(pageId).classList.contains('hide-nav') || 
+        pageId === 'search-results-page') {  // AJOUTER CETTE CONDITION
+        bottomNav.classList.add('hidden');
+    } else {
+        bottomNav.classList.remove('hidden');
+    }
+    
+    // Recharger les livres favoris si on va sur la page bibliothèque
+    if (pageId === 'library-page') {
+        loadFavoriteBooks();
+    }
+}
 
         // Afficher les détails d'un livre
         function showBookDetail(book) {
@@ -1203,30 +1277,107 @@ document.getElementById('back-to-home').addEventListener('click', function() {
         }
 
         // Afficher les résultats de recherche
-        function displaySearchResults(results) {
-            searchResults.innerHTML = '';
-            
-            if (results.length === 0) {
-                searchResults.innerHTML = '<div class="search-result-item">Aucun résultat trouvé</div>';
-            } else {
-                results.forEach(book => {
-                    const resultItem = document.createElement('div');
-                    resultItem.className = 'search-result-item';
-                    resultItem.innerHTML = `
-                        <div><strong>${book.title}</strong></div>
-                        <div>${book.author}</div>
-                    `;
-                    resultItem.addEventListener('click', () => {
-                        showBookDetail(book);
-                        searchInput.value = '';
-                        searchResults.classList.remove('active');
-                    });
-                    searchResults.appendChild(resultItem);
-                });
-            }
-            
-            searchResults.classList.add('active');
+       // Afficher les résultats de recherche dans une page dédiée
+// Afficher les résultats de recherche dans une page dédiée
+function displaySearchResults(results) {
+    const query = searchInput.value.trim();
+    
+    if (query.length === 0) {
+        searchResults.classList.remove('active');
+        return;
+    }
+    
+    searchResults.innerHTML = '';
+    
+    if (results.length === 0) {
+        searchResults.innerHTML = '<div class="search-result-item">Aucun résultat trouvé</div>';
+        searchResults.classList.add('active');
+    } else {
+        // Afficher les résultats en popup ET préparer la page dédiée
+        results.forEach((book, index) => {
+            const resultItem = document.createElement('div');
+            resultItem.className = 'search-result-item';
+            resultItem.innerHTML = `
+                <div><strong>${book.title}</strong></div>
+                <div>${book.author}</div>
+            `;
+            resultItem.addEventListener('click', () => {
+                // Mettre en surbrillance et aller au livre
+                highlightAndGoToBook(book, index);
+            });
+            searchResults.appendChild(resultItem);
+        });
+        
+        searchResults.classList.add('active');
+        
+        // Préparer les données pour la page dédiée
+        window.searchResultsData = results;
+        window.searchQuery = query;
+    }
+}
+      
+      // Mettre en surbrillance et aller au livre
+function highlightAndGoToBook(book, index) {
+    // Cacher les résultats popup
+    searchResults.classList.remove('active');
+    searchInput.value = '';
+    
+    // Afficher la page de résultats dédiée
+    showSearchResultsPage(window.searchResultsData, window.searchQuery, index);
+}
+
+// Afficher la page de résultats
+function showSearchResultsPage(results, query, highlightedIndex = -1) {
+    // Mettre à jour le titre
+    document.getElementById('search-results-title').textContent = 
+        `Résultats pour "${query}" (${results.length})`;
+    
+    // Mettre la valeur de recherche dans l'input
+    const searchResultsInput = document.getElementById('search-results-input');
+    searchResultsInput.value = query;
+    searchResultsInput.focus(); // Focus sur le champ de recherche
+    
+    // Remplir la grille de résultats
+    const resultsGrid = document.getElementById('search-results-grid');
+    resultsGrid.innerHTML = '';
+    
+    results.forEach((book, index) => {
+        const bookCard = createBookCard(book);
+        
+        // Ajouter la surbrillance si c'est l'élément cliqué 
+        if (index === highlightedIndex) {
+            bookCard.style.border = '2px solid var(--primary-color)';
+            bookCard.style.boxShadow = '0 0 10px rgba(52, 152, 219, 0.5)';
         }
+        
+        resultsGrid.appendChild(bookCard);
+    });
+    
+    // Afficher la page
+    showPage('search-results-page');
+}
+
+// Afficher la page de résultats
+function showSearchResultsPage(results) {
+    // Mettre à jour le titre
+    document.getElementById('search-results-title').textContent = 
+        `Résultats pour "${searchInput.value}" (${results.length})`;
+    
+    // Mettre la valeur de recherche dans l'input
+    document.getElementById('search-results-input').value = searchInput.value;
+    
+    // Remplir la grille de résultats
+    const resultsGrid = document.getElementById('search-results-grid');
+    resultsGrid.innerHTML = '';
+    
+    results.forEach(book => {
+        const bookCard = createBookCard(book);
+        resultsGrid.appendChild(bookCard);
+    });
+    
+    // Afficher la page
+    showPage('search-results-page');
+}
 
         // Chapitre suivant
         function nextChapter() {
