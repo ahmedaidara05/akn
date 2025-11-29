@@ -602,9 +602,7 @@
                 </div>
             </section>
 
-            <div class="promotion-banner">
-                49% Désactivé - Fin dans 01:59:05
-            </div>
+            
         </div>
     </div>
 
@@ -622,20 +620,20 @@
             <h1 class="book-detail-title" id="detail-title">Titre du livre</h1>
             <p class="book-detail-author" id="detail-author">Auteur du livre</p>
             <div class="book-detail-rating">
-                <span>4.6 <i class="fas fa-star"></i></span>
+                
             </div>
             <div class="book-detail-meta">
                 <div class="meta-item">
                     <span class="meta-value" id="detail-key-points">10</span>
-                    <span class="meta-label">points clés</span>
+                    <span class="meta-label"> </span>
                 </div>
                 <div class="meta-item">
                     <span class="meta-value" id="detail-duration">51 min</span>
-                    <span class="meta-label">durée</span>
+                    <span class="meta-label"> </span>
                 </div>
                 <div class="meta-item">
                     <span class="meta-value" id="detail-rating">4.6</span>
-                    <span class="meta-label">note</span>
+                    <span class="meta-label"> </span>
                 </div>
             </div>
         </div>
@@ -750,19 +748,20 @@
     <div class="bottom-nav" id="bottom-nav">
         <a href="#" class="nav-item active" data-page="home-page">
             <div class="nav-icon"><i class="fas fa-home"></i></div>
-            <span>Pour Vous</span>
+            <span> </span>
         </a>
-        <a href="#" class="nav-item" data-page="discover-page">
-            <div class="nav-icon"><i class="fas fa-compass"></i></div>
-            <span>Découvrir</span>
-        </a>
+       
         <a href="#" class="nav-item" data-page="library-page">
             <div class="nav-icon"><i class="fas fa-book"></i></div>
-            <span>Ma Bibliothèque</span>
+            <span> </span>
+        </a>
+       <a href="#" class="nav-item" data-page="discover-page">
+            <div class="nav-icon"><i class="fas fa-user-graduate"></i></div>
+            <span> </span>
         </a>
         <a href="#" class="nav-item" data-page="profile-page">
             <div class="nav-icon"><i class="fas fa-user"></i></div>
-            <span>Profil</span>
+            <span> </span>
         </a>
     </div>
 
@@ -771,24 +770,23 @@
         const books = [
             {
                 id: 1,
-                title: "Père riche, père pauvre",
-                author: "Robert Kiyosaki",
-                cover: "https://via.placeholder.com/150x200?text=Père+riche+père+pauvre",
-                description: "Le livre n°1 sur la finance personnelle depuis 25 ans Ce que les riches enseignent à leurs enfants à propos de l'argent - et que les pauvres et la classe moyenne n'enseignent pas !",
-                keyPoints: 10,
-                duration: "51 min",
-                rating: 4.6,
+                title: "PENSEES ACTUELLES (TOME 1)",
+                author: "AHMED KHALIFA NIASSE",
+                cover: "https://i.postimg.cc/FzWn4HZM/ZESGFZ.png",
+                description: "Cet ouvrage, premier d’une série de quatre tomes, explore des thématiques liées à la religion islamique, avec un focus particulier sur l’islam confrérique sénégalais. L’auteur y analyse les dynamiques religieuses, les enjeux socio-politiques et les déviances doctrinales, tout en mettant en avant la richesse et la profondeur des enseignements coraniques.Divisé en chapitres, ce recueil aborde des sujets variés comme le rôle des confréries, la lutte contre le fondamentalisme, et la place des sciences dans l’islam. Il met aussi en lumière les défis posés par l’extrémisme religieux, tout en plaidant pour un islam basé sur l’unité et la complémentarité. Ahmed Khalifa NIASSE propose une réflexion critique sur l’évolution de l’islam au Sénégal et dans le monde, en s’appuyant sur des récits historiques, des analyses personnelles et des références coraniques.",
+                
+                duration: " ",
+               
                 keyPointsList: [
-                    "Comprendre la richesse : La mentalité des riches",
-                    "Comprendre l'éducation financière et l'investissement dans les actifs",
-                    "Occupez-vous de vos affaires : Construire sa richesse par la possession d'actifs",
-                    "Comprendre la richesse : Comment les riches naviguent dans les systèmes fiscaux et juridiques",
-                    "L'importance de l'éducation financière pour atteindre la richesse",
-                    "Atteindre le succès financier par l'éducation et la planification",
-                    "Le rôle de l'intelligence financière et du courage dans la création de richesse",
-                    "Embrassez les risques d'investissement pour une croissance financière plus importante",
-                    "L'importance d'apprendre plutôt que de gagner",
-                    "Conclusion"
+                    "Radiographie de l’islam confrérique sénégalais",
+                    "L’appel à un islam équilibré et lumineux",
+                    "Analyse des déviances et dérives doctrinales",
+                    "Un discours ferme contre le fondamentalisme et l’extrémisme",
+                    "Les sciences et la connaissance comme piliers de l’islam",
+                    "Une lecture socio-politique du religieux",
+                    "Une mise en perspective internationale",
+                    "Un style mêlant histoire, spiritualité et analyse profonde"
+
                 ],
                 chapters: [
                     {
@@ -798,48 +796,30 @@
                             <p>Dès leur jeune âge, Kiyosaki et son ami Mike étaient animés par la décision de devenir riches. Ils ont commencé par créer leur propre entreprise de fabrication de pièces de monnaie en plomb, mais ont rapidement réalisé que cela n'était pas légal. Leur "Père riche" les a alors pris sous son aile et leur a enseigné des leçons précieuses sur l'argent et les affaires.</p>
                             <p>La première leçon que Kiyosaki a apprise de son "Père riche" était que les pauvres et la classe moyenne travaillent pour l'argent, tandis que les riches font en sorte que l'argent travaille pour eux. Cette distinction fondamentale est au cœur de la philosophie de Kiyosaki et constitue la base de son approche de l'éducation financière.</p>
                         `
-                    },
-                    {
-                        title: "Comprendre l'éducation financière et l'investissement dans les actifs",
-                        content: `
-                            <p>L'éducation financière est un concept central dans "Père riche, père pauvre". Kiyosaki soutient que le système éducatif traditionnel ne prépare pas les gens à comprendre l'argent et à gérer leurs finances personnelles. Au lieu de cela, il perpétue le cycle de la pauvreté en formant les gens à devenir de bons employés plutôt que des propriétaires d'entreprise ou des investisseurs.</p>
-                            <p>Kiyosaki introduit le concept d'actifs et de passifs d'une manière simple mais puissante : un actif met de l'argent dans votre poche, tandis qu'un passif en retire. Cette définition simplifiée aide les lecteurs à comprendre pourquoi il est important d'acquérir des actifs et de réduire les passifs.</p>
-                            <p>Selon Kiyosaki, la plupart des gens confondent les actifs et les passifs. Par exemple, beaucoup considèrent leur maison comme un actif, mais en réalité, c'est un passif car elle génère des dépenses (hypothèque, entretien, taxes) plutôt que des revenus.</p>
-                        `
-                    },
-                    {
-                        title: "Occupez-vous de vos affaires : Construire sa richesse par la possession d'actifs",
-                        content: `
-                            <p>Kiyosaki encourage les lecteurs à "s'occuper de leurs affaires", ce qui signifie qu'ils devraient se concentrer sur la construction de leur colonne d'actifs tout en conservant leur emploi de jour. Il ne s'agit pas de quitter son emploi immédiatement, mais plutôt de commencer à investir dans des actifs qui généreront des revenus passifs.</p>
-                            <p>Les actifs recommandés par Kiyosaki comprennent les entreprises qui ne nécessitent pas votre présence, les actions, les obligations, les fonds communs de placement, les biens immobiliers générateurs de revenus, les redevances et tout ce qui a de la valeur, produit des revenus ou prend de la valeur et a un marché disponible.</p>
-                            <p>Kiyosaki souligne l'importance de réinvestir les revenus de vos actifs pour acquérir encore plus d'actifs, créant ainsi un cycle vertueux de croissance de la richesse.</p>
-                        `
                     }
+                   
                 ]
             },
             {
                 id: 2,
-                title: "Les 7 habitudes des gens efficaces",
-                author: "Stephen R. Covey",
-                cover: "https://via.placeholder.com/150x200?text=7+Habitudes",
-                description: "Un guide pour développer une efficacité personnelle et professionnelle durable.",
-                keyPoints: 7,
-                duration: "45 min",
-                rating: 4.5,
+                title: "PENSEES ACTUELLES (TOME 2)",
+                author: "AHMED KHALIFA NIASSE",
+                cover: "https://i.postimg.cc/JzfZGHzD/HGVJB.png",
+                description: "Cet ouvrage, premier d’une série de quatre tomes, explore des thématiques liées à la religion islamique, avec un focus particulier sur l’islam confrérique sénégalais. L’auteur y analyse les dynamiques religieuses, les enjeux socio-politiques et les déviances doctrinales, tout en mettant en avant la richesse et la profondeur des enseignements coraniques.Divisé en chapitres, ce recueil aborde des sujets variés comme le rôle des confréries, la lutte contre le fondamentalisme, et la place des sciences dans l’islam. Il met aussi en lumière les défis posés par l’extrémisme religieux, tout en plaidant pour un islam basé sur l’unité et la complémentarité. Ahmed Khalifa NIASSE propose une réflexion critique sur l’évolution de l’islam au Sénégal et dans le monde, en s’appuyant sur des récits historiques, des analyses personnelles et des références coraniques.",
+                duration: " ",
                 keyPointsList: [
-                    "Être proactif",
-                    "Commencer avec la fin en tête",
-                    "Donner la priorité aux priorités",
-                    "Penser gagnant-gagnant",
-                    "Chercher d'abord à comprendre",
-                    "Synergiser",
-                    "Aiguiser la scie"
+                    "Une cartographie intellectuelle de l’islam contemporain",
+                    "La place des femmes en Islam : dignité, droits et responsabilité",
+                    "Les droits sociaux et économiques au cœur du message islamique",
+                    "Une réflexion sur la gouvernance et la responsabilité politique",
+                    "Un retour aux grandes figures de l’histoire islamique",
+                    "Dénonciation des dérives sociales et religieuses actuelles",
+                    "Entre théologie, mémoire et plaidoyer pour une modernité enracinée",
+                    "Une œuvre au courage intellectuel assumé"
+
                 ],
                 chapters: [
-                    {
-                        title: "Être proactif",
-                        content: "<p>Contenu du chapitre sur la proactivité...</p>"
-                    },
+                   
                     {
                         title: "Commencer avec la fin en tête",
                         content: "<p>Contenu du chapitre sur la vision...</p>"
