@@ -507,21 +507,109 @@
         }
 
         /* Résultats de recherche */
-     /* Résultats de recherche */
 .search-results {
     display: none;
     background-color: white;
     color: var(--text-color);
-    border-radius: 8px;
-    box-shadow: var(--shadow);
-    margin-top: 10px;
-    max-height: 300px;
+    border-radius: 15px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+    max-height: 70vh; /* 70% de la hauteur de l'écran */
+    min-height: 300px;
     overflow-y: auto;
-    position: absolute;
-    width: 100%;
-    z-index: 101;
+    position: fixed; /* CHANGÉ: fixed au lieu de absolute */
+    top: 100px; /* Position fixe depuis le haut */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90vw; /* 90% de la largeur de la fenêtre */
+    max-width: 800px; /* Largeur maximale */
+    z-index: 1000; /* Très élevé pour être au-dessus de tout */
+    padding: 25px;
+    font-size: 1.1rem;
+    line-height: 1.7;
+    border: 3px solid var(--primary-color);
 }
 
+.search-bar {
+    flex: 1;
+    max-width: 500px;
+    margin: 0 20px;
+    position: relative;
+    /* SUPPRIMER toute référence aux résultats ici */
+}
+
+
+.search-result-item {
+    padding: 20px 25px; /* BEAUCOUP PLUS D'ESPACE */
+    border-bottom: 2px solid #f0f0f0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    background: #fafafa;
+}
+/* Style pour la page de résultats dédiée */
+#search-results-page .book-card {
+    padding: 25px;
+    margin-bottom: 20px;
+    background: #fafafa;
+    border-radius: 12px;
+    border: 2px solid #e0e0e0;
+    transition: all 0.3s ease;
+}
+
+#search-results-page .book-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    border-color: var(--primary-color);
+}
+
+#search-results-page .book-info {
+    padding: 0;
+}
+
+#search-results-page .book-title {
+    font-size: 1.3rem;
+    margin-bottom: 8px;
+    color: var(--secondary-color);
+}
+
+#search-results-page .book-author {
+    font-size: 1rem;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    font-weight: 500;
+}
+
+/* Mode sombre pour la page de résultats */
+body.dark-mode #search-results-page .book-card {
+    background: #3a3a3a;
+    border-color: #555;
+}
+.search-result-item:hover {
+    background-color: var(--primary-color);
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Pour le mode sombre */
+body.dark-mode .search-results {
+    background-color: var(--card-color);
+    color: var(--text-color);
+}
+
+body.dark-mode .search-result-item:hover {
+    background-color: #3a3a3a;
+}
+
+/* Style pour la surbrillance dans les résultats */
+.search-result-item mark {
+    background-color: #ffeb3b;
+    color: #000;
+    padding: 1px 3px;
+    border-radius: 2px;
+    font-weight: bold;
+}
 .search-results.active {
     display: block;
 }
@@ -2823,7 +2911,7 @@ document.getElementById('show-summary').addEventListener('click', function() {
     }
 });
     // RECHERCHE DEPUIS PAGE RÉSULTATS - CORRIGÉ
-  // Recherche depuis page résultats
+// RECHERCHE DEPUIS PAGE RÉSULTATS - MODIFIÉ
 document.getElementById('search-results-input').addEventListener('input', function() {
     const query = this.value.toLowerCase().trim();
     
@@ -2832,35 +2920,69 @@ document.getElementById('search-results-input').addEventListener('input', functi
         document.getElementById('search-results-title').textContent = 'Résultats de recherche';
         return;
     }
-     
+    
     // Filtrer dans le CONTENU des livres
     const results = books.filter(book => {
-        // Rechercher dans le titre, auteur, description
-        const basicMatch = book.title.toLowerCase().includes(query) || 
-                          book.author.toLowerCase().includes(query) ||
-                          book.description.toLowerCase().includes(query);
-        
-        // Rechercher dans le CONTENU des chapitres
-        const contentMatch = book.chapters.some(chapter => 
+        // Rechercher dans les chapitres
+        return book.chapters.some(chapter => 
             chapter.content.toLowerCase().includes(query)
         );
-        
-        return basicMatch || contentMatch;
     });
-        
-        // Afficher directement dans la page
-        const resultsGrid = document.getElementById('search-results-grid');
-        resultsGrid.innerHTML = '';
-        
-        results.forEach(book => {
-            const bookCard = createBookCard(book);
-            resultsGrid.appendChild(bookCard);
+    
+    // Afficher les phrases au lieu des livres
+    const resultsGrid = document.getElementById('search-results-grid');
+    resultsGrid.innerHTML = '';
+    
+    if (results.length === 0) {
+        resultsGrid.innerHTML = '<p style="padding: 20px; text-align: center;">Aucun résultat trouvé</p>';
+    } else {
+        results.forEach((book) => {
+            book.chapters.forEach((chapter, chapterIndex) => {
+                const content = chapter.content;
+                const regex = new RegExp(`([^.!?]*${query}[^.!?]*[.!?])`, 'gi');
+                const matches = content.match(regex);
+                
+                if (matches) {
+                    matches.forEach((sentence) => {
+                        const resultItem = document.createElement('div');
+                        resultItem.className = 'book-card';
+                        resultItem.style.cursor = 'pointer';
+                        
+                        const highlightedSentence = sentence.replace(
+                            new RegExp(query, 'gi'), 
+                            '<mark class="search-highlight">$&</mark>'
+                        );
+                        
+                      // Dans la fonction displaySearchResults, modifiez la création des résultats :
+resultItem.innerHTML = `
+    <div style="font-size: 1.1rem; font-weight: bold; color: var(--secondary-color); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+        <span>${book.title}</span>
+        <span style="font-size: 0.9rem; color: var(--primary-color); background: rgba(52, 152, 219, 0.1); padding: 4px 12px; border-radius: 15px;">
+            ${chapter.title}
+        </span>
+    </div>
+    <div style="font-size: 1.05rem; line-height: 1.7; background: white; padding: 15px; border-radius: 8px; border-left: 4px solid var(--primary-color);">
+        ${highlightedSentence}
+    </div>
+    <div style="margin-top: 10px; font-size: 0.9rem; color: var(--text-light); text-align: right;">
+        Cliquer pour aller à cette section →
+    </div>
+`;
+                        
+                        resultItem.addEventListener('click', () => {
+                            goToSearchResult(book, chapterIndex, query, sentence);
+                        });
+                        
+                        resultsGrid.appendChild(resultItem);
+                    });
+                }
+            });
         });
-        
-        document.getElementById('search-results-title').textContent = 
-            `Résultats pour "${query}" (${results.length})`;
-    });
-
+    }
+    
+    document.getElementById('search-results-title').textContent = 
+        `Résultats pour "${query}"`;
+});
     // Navigation par glissement horizontal
     let touchStartX = 0;
     let touchEndX = 0;
@@ -2890,24 +3012,19 @@ document.getElementById('search-results-input').addEventListener('input', functi
 }
 
       // Fonction pour aller directement au chapitre contenant le texte recherché
-function goToSearchResult(book, query) {
-    // Trouver le premier chapitre qui contient le texte recherché
-    const foundChapterIndex = book.chapters.findIndex(chapter => 
-        chapter.content.toLowerCase().includes(query.toLowerCase())
-    );
+// Fonction pour aller directement à la phrase recherchée
+function goToSearchResult(book, chapterIndex, query, sentence = null) {
+    showReadingPage(book, chapterIndex);
     
-    if (foundChapterIndex !== -1) {
-        // Aller directement au chapitre contenant le texte
-        showReadingPage(book, foundChapterIndex);
-        
-        // Surligner le texte recherché
-        setTimeout(() => {
+    // Surligner et scroll vers le terme recherché
+    setTimeout(() => {
+        if (sentence) {
+            // Trouver la position exacte de la phrase dans le chapitre
+            highlightAndScrollToText(sentence.trim());
+        } else {
             highlightSearchText(query);
-        }, 100);
-    } else {
-        // Si pas trouvé dans le contenu, aller au détail du livre
-        showBookDetail(book);
-    }
+        }
+    }, 200);
 }
         // Afficher une page spécifique
       function showPage(pageId) {
@@ -2927,7 +3044,39 @@ function goToSearchResult(book, query) {
         loadFavoriteBooks();
     }
 }
-
+// Fonction pour surligner et scroll vers un texte spécifique
+function highlightAndScrollToText(text) {
+    const chapterContent = document.getElementById('chapter-content');
+    const content = chapterContent.innerHTML;
+    
+    // Supprimer les anciennes surbrillances
+    const cleanContent = content.replace(/<mark class="search-highlight">|<\/mark>/gi, '');
+    
+    // Mettre en surbrillance le texte spécifique
+    const regex = new RegExp(`(${text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    const highlightedContent = cleanContent.replace(regex, '<mark class="search-highlight" id="search-target">$1</mark>');
+    
+    chapterContent.innerHTML = highlightedContent;
+    
+    // Scroll vers l'élément surligné
+    setTimeout(() => {
+        const targetElement = document.getElementById('search-target');
+        if (targetElement) {
+            targetElement.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+            
+            // Animation visuelle supplémentaire
+            targetElement.style.transition = 'all 0.5s ease';
+            targetElement.style.backgroundColor = '#ffeb3b';
+            
+            setTimeout(() => {
+                targetElement.style.backgroundColor = 'yellow';
+            }, 500);
+        }
+    }, 100);
+}
         // Afficher les détails d'un livre
         function showBookDetail(book) {
             currentBook = book;
@@ -3037,8 +3186,7 @@ function goToSearchResult(book, query) {
         }
 
         // Afficher les résultats de recherche
-       // Afficher les résultats de recherche dans une page dédiée
-// Afficher les résultats de recherche dans une page dédiée
+ // Afficher les résultats de recherche avec les phrases contenant le terme
 function displaySearchResults(results) {
     const query = searchInput.value.trim();
     
@@ -3053,28 +3201,53 @@ function displaySearchResults(results) {
         searchResults.innerHTML = '<div class="search-result-item">Aucun résultat trouvé</div>';
         searchResults.classList.add('active');
     } else {
-        // Afficher les résultats en popup ET préparer la page dédiée
-        results.forEach((book, index) => {
-            const resultItem = document.createElement('div');
-            resultItem.className = 'search-result-item';
-            resultItem.innerHTML = `
-                <div><strong>${book.title}</strong></div>
-                <div>${book.author}</div>
-            `;
-           resultItem.addEventListener('click', () => {
-    // Aller directement au CONTENU du livre qui correspond
-    searchResults.classList.remove('active');
-    searchInput.value = '';
-    goToSearchResult(book, query);
-});
-            searchResults.appendChild(resultItem);
+        // Afficher les phrases contenant le terme recherché
+        results.forEach((book) => {
+            book.chapters.forEach((chapter, chapterIndex) => {
+                // Trouver toutes les occurrences dans le contenu du chapitre
+                const content = chapter.content;
+                const regex = new RegExp(`([^.!?]*${query}[^.!?]*[.!?])`, 'gi');
+                const matches = content.match(regex);
+                
+                if (matches) {
+                    matches.forEach((sentence) => {
+                        const resultItem = document.createElement('div');
+                        resultItem.className = 'search-result-item';
+                        
+                        // Mettre en évidence le terme recherché dans la phrase
+                        const highlightedSentence = sentence.replace(
+                            new RegExp(query, 'gi'), 
+                            '<mark class="search-highlight">$&</mark>'
+                        );
+                        
+                        resultItem.innerHTML = `
+                            <div style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 5px;">
+                                <strong>${book.title}</strong> - ${chapter.title}
+                            </div>
+                            <div style="font-size: 0.85rem; line-height: 1.4;">
+                                ...${highlightedSentence}...
+                            </div>
+                        `;
+                        
+                        resultItem.addEventListener('click', () => {
+                            searchResults.classList.remove('active');
+                            searchInput.value = '';
+                            // Aller directement au chapitre et positionner près du terme
+                            goToSearchResult(book, chapterIndex, query, sentence);
+                        });
+                        
+                        searchResults.appendChild(resultItem);
+                    });
+                }
+            });
         });
         
-        searchResults.classList.add('active');
+        // Si aucun résultat trouvé dans les phrases
+        if (searchResults.children.length === 0) {
+            searchResults.innerHTML = '<div class="search-result-item">Aucune phrase contenant ce terme</div>';
+        }
         
-        // Préparer les données pour la pa dédiée
-        window.searchResultsData = results;
-        window.searchQuery = query;
+        searchResults.classList.add('active');
     }
 }
       // Mettre en surbrillance le texte dans la page de lecture
