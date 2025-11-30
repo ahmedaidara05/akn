@@ -19,12 +19,12 @@
         }
 
         /* Styles généraux */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+      * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
 
         body {
             background-color: var(--background-color);
@@ -377,21 +377,21 @@
             text-align: justify;
         }
 
-        .reading-settings {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: white;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: var(--shadow);
-            cursor: pointer;
-            z-index: 90;
-        }
+      .reading-settings {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    background-color: white;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    z-index: 90;
+}
 
         .settings-panel {
             position: fixed;
@@ -601,7 +601,7 @@ body.dark-mode .search-result-item.highlighted {
                 <div class="header-content">
                     <a href="#" class="logo">PENSEES ACTUELLES</a>
                     <div class="search-bar">
-                        <input type="text" id="search-input" placeholder="Titre, sujet...">
+                        <input type="text" id="search-input" placeholder="Recherchez un sujet...">
                         <div class="search-results" id="search-results">
                             <!-- Les résultats de recherche seront ajoutés ici -->
                         </div>
@@ -710,8 +710,11 @@ body.dark-mode .search-result-item.highlighted {
             <p class="book-detail-author" id="detail-author">Auteur du livre</p>
             <div class="book-detail-rating">
                  <button id="start-reading" style="background-color: var(--primary-color); color: white; border: none; padding: 12px 20px; border-radius: 8px; width: 100%; font-size: 1rem; cursor: pointer;">
-                Commencer la lecture
+                Lire 
             </button>
+              <button id="show-summary" style="background-color: var(--primary-color); color: white; border: none; padding: 12px 20px; border-radius: 8px; width: 100%; font-size: 1rem; cursor: pointer; margin-top: 10px;">
+    Voir le sommaire
+</button>
             </div>
       
             <div class="book-detail-meta">
@@ -771,9 +774,9 @@ body.dark-mode .search-result-item.highlighted {
             </div>
         </div>
 
-        <div class="reading-settings" id="reading-settings-btn">
-            <i class="fas fa-cog"></i>
-        </div>
+       <div class="reading-settings" id="reading-settings-btn">
+    <i class="fas fa-font"></i>
+</div> 
 
         <div class="settings-panel" id="settings-panel">
             <div class="setting-option">
@@ -2708,6 +2711,7 @@ function setupEventListeners() {
             showPage(pageId);
         });
     });
+    setupSettingsPanelClose();
 
     // Bouton favori
     favoriteBtn.addEventListener('click', function() {
@@ -2812,7 +2816,12 @@ searchInput.addEventListener('input', function() {
     document.getElementById('back-from-search').addEventListener('click', function() {
         showPage('home-page');
     });
-
+// Dans la fonction setupEventListeners(), ajoutez :
+document.getElementById('show-summary').addEventListener('click', function() {
+    if (currentBook) {
+        showTocPage(currentBook);
+    }
+});
     // RECHERCHE DEPUIS PAGE RÉSULTATS - CORRIGÉ
   // Recherche depuis page résultats
 document.getElementById('search-results-input').addEventListener('input', function() {
@@ -2949,18 +2958,36 @@ function goToSearchResult(book, query) {
         }
 
         // Afficher la page de lecture
-        function showReadingPage(book, chapterIndex) {
-            currentBook = book;
-            currentChapterIndex = chapterIndex;
-            
-            // Mettre à jour les éléments de la page de lecture
-            document.getElementById('reading-chapter-title').textContent = `Chapitre ${chapterIndex + 1}`;
-            document.getElementById('chapter-title').textContent = book.chapters[chapterIndex].title;
-            document.getElementById('chapter-content').innerHTML = book.chapters[chapterIndex].content;
-            
-            // Afficher la page de lecture
-            showPage('reading-page');
+      function showReadingPage(book, chapterIndex) {
+    currentBook = book;
+    currentChapterIndex = chapterIndex;
+    
+    // Mettre à jour les éléments de la page de lecture
+    document.getElementById('reading-chapter-title').textContent = `Chapitre ${chapterIndex + 1}`;
+    document.getElementById('chapter-title').textContent = book.chapters[chapterIndex].title;
+    document.getElementById('chapter-content').innerHTML = book.chapters[chapterIndex].content;
+    
+    // Afficher la page de lecture
+    showPage('reading-page');
+    
+    // FORCER LE SCROLL EN HAUT APRÈS UN COURT DELAI
+    setTimeout(() => {
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'instant' // 'instant' pour un défilement immédiat sans animation
+        });
+        
+        // Forcer aussi le scroll de l'élément de contenu
+        const readingContent = document.querySelector('.reading-content');
+        if (readingContent) {
+            readingContent.scrollTop = 0;
         }
+    }, 50);
+    
+    // Ajouter le bouton favori pour le chapitre
+    updateChapterFavoriteButton(book.id, chapterIndex);
+}
 
         // Afficher la page du sommaire
         function showTocPage(book) {
@@ -3073,7 +3100,20 @@ function highlightAndGoToBook(book, index) {
     // Afficher la page de résultats dédiée
     showSearchResultsPage(window.searchResultsData, window.searchQuery, index);
 }
-
+// Fonction pour fermer le panneau de paramètres quand on clique en dehors
+function setupSettingsPanelClose() {
+    document.addEventListener('click', function(event) {
+        const settingsPanel = document.getElementById('settings-panel');
+        const settingsBtn = document.getElementById('reading-settings-btn');
+        
+        // Si le panneau est ouvert ET qu'on a cliqué en dehors du panneau ET en dehors du bouton
+        if (settingsPanel.classList.contains('active') && 
+            !settingsPanel.contains(event.target) && 
+            !settingsBtn.contains(event.target)) {
+            settingsPanel.classList.remove('active');
+        }
+    });
+}
 // Afficher la page de résultats
 function showSearchResultsPage(results, query, highlightedIndex = -1) {
     // Mettre à jour le titre
